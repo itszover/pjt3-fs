@@ -1,10 +1,8 @@
 import app from "./app.js";
 import mongoose from "mongoose";
 
-// const DATABASE_URI = process.env.DATABASE_URI;
+mongoose.connect(process.env.DATABASE_URI);
+mongoose.connection.on('error', () => console.log('Error connecting to database'));
+mongoose.connection.once('open', () => console.log('Connected to database'));
 
-// database.connect(DATABASE_URI);
-// database.connection.on('error', onErrorDB);
-// database.connection.once('open', onListeningDB);
-
-app.listen(3000, () => {console.log("Server is running on port 3000")});
+app.listen(process.env.PORT, () => {console.log("Server is running on port 3000")});
