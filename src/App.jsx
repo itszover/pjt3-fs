@@ -4,20 +4,28 @@ function App() {
   let [name, setName] = useState("");
   let [description, setDescription] = useState("");
   let [image, setImage] = useState("");
+  let [searchResults, setSearchResults] = useState([]);
 
   function insertCard() {
     fetch('http://localhost:3000/api/insert', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ name, description, image: "https://via.placeholder.com/150" })
-    })
+    });
   }
 
-  function searchCards() {
-    fetch(`http://localhost:3000/api/select?name=${name}`, {
+  async function searchCards() {
+    let response = await fetch(`http://localhost:3000/api/select?name=${name}`, {
       method: 'GET',
       headers: { 'Content-Type': 'application/json' }
-    }).then(res => res.json()).then(console.log)
+    });
+
+    if (!response.ok) {
+      throw new Error('Erro ao buscar cartas');
+    }
+    
+    let data = await response.json();
+    setSearchResults(data);
   }
 
   return (
@@ -29,8 +37,15 @@ function App() {
         <button onClick={insertCard}>Inserir Carta</button>
         <button onClick={searchCards}>Pesquisar</button>
       </div>
+      <div className="search-results">
+        <ul>
+          {searchResults.map((result, index) => (
+            <li key={index}>{result.name}</li>
+          ))}
+        </ul>
+      </div>
     </>
-  )
+  );
 }
 
 export default App;
