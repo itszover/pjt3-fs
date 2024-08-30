@@ -1,6 +1,6 @@
 import express from "express";
 import cors from "cors"
-import api from "./api.js";
+import api from "./api/route.js";
 import 'dotenv/config';
 
 let app = express();
