@@ -24,6 +24,10 @@ body {
     transition: border-color 0.3s;
     display: block;
     margin-bottom: 30px;
+
+    &:focus {
+        border-bottom-color: gray;
+    }
 }
 
 .card-input button {
