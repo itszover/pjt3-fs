@@ -43,9 +43,9 @@ async function login(req, res) {
 }
 
 async function insert(req, res) {
-    await body('name').notEmpty.trim().escape().run(req);
-    await body('description').notEmpty.trim().escape().run(req);
-    await body('image').notEmpty.trim().isURL().run(req);
+    await body('name').trim().notEmpty().escape().run(req);
+    await body('description').trim().notEmpty().escape().run(req);
+    await body('image').trim().notEmpty().isURL().run(req);
 
     let errors = validationResult(req);
 
