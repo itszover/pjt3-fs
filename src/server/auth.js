@@ -8,7 +8,7 @@ function auth(req, res, next) {
         return;
     }
 
-    const token = header.split(' ')[1]; // Extraindo o token do cabeçalho
+    const token = header.split(' ')[1];
 
     if (!token) {
         res.status(401).send({ message: "Token não fornecido" });
