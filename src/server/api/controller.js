@@ -2,13 +2,10 @@ import card from "./card.js";
 import User from "./user.js";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
+import { body, validationResult } from "express-validator";
 
 function index(req, res) {
-    let user = new User({ username: "teste", password: "teste" });
-    user.save()
-    
     res.send("Olá");
-
 }
 
 async function login(req, res) {
@@ -41,7 +38,18 @@ async function login(req, res) {
     }   
 }
 
-function insert(req, res) {
+async function insert(req, res) {
+    await body('name').trim().escape().run(req);
+    await body('description').trim().escape().run(req);
+    await body('image').trim().isURL().run(req);
+
+    let errors = validationResult(req);
+
+    if (!errors.isEmpty()) {
+        res.status(400).send({ errors: errors.array() });
+        return;
+    }
+    
     let { name, description, image } = req.body;
 
     if (!name || !description || !image) {
