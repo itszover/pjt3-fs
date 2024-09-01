@@ -18,8 +18,6 @@ function auth(req, res, next) {
     try {
         const decoded = jwt.verify(token, process.env.SECRET_KEY);
         req.userId = decoded.id;
-        console.log('foi');
-        
         next();
     } catch (error) {
         console.log(error);
