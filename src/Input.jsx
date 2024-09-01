@@ -1,12 +1,17 @@
 import React, { useState } from 'react';
+import DOMPurify from 'dompurify';
 
 function Input({ onInsertCard }) {
-    const [name, setName] = useState("");
-    const [description, setDescription] = useState("");
-    const [image, setImage] = useState("");
+    let [name, setName] = useState("");
+    let [description, setDescription] = useState("");
+    let [image, setImage] = useState("");
 
-    const handleInsertCard = () => {
-        onInsertCard({ name, description, image });
+    function handleInsertCard() {
+        onInsertCard({
+            name: DOMPurify.sanitize(name),
+            description: DOMPurify.sanitize(description),
+            image: DOMPurify.sanitize(image)
+        });
         setName("");
         setDescription("");
         setImage("");
