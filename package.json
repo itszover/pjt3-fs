@@ -5,7 +5,8 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
+    "build": "vite build && npm run build:server",
+    "build:server": "babel src/server --out-dir dist/server --extensions \".js\"",
     "preview": "vite preview",
     "server": "nodemon src/server/index.js"
   },
@@ -24,6 +25,9 @@
     "react-dom": "^18.3.1"
   },
   "devDependencies": {
+    "@babel/cli": "^7.25.6",
+    "@babel/core": "^7.25.2",
+    "@babel/preset-env": "^7.25.4",
     "@types/react": "^18.3.3",
     "@types/react-dom": "^18.3.0",
     "@vitejs/plugin-react": "^4.3.1",
