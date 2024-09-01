@@ -2,14 +2,14 @@ import { useState } from 'react';
 import { login, saveToken } from '../services/auth';
 
 function Login({ onLogin }) {
-    const [username, setUsername] = useState('');
-    const [password, setPassword] = useState('');
-    const [error, setError] = useState('');
+    let [username, setUsername] = useState('');
+    let [password, setPassword] = useState('');
+    let [error, setError] = useState('');
 
     async function handleSubmit(event) {
         event.preventDefault();
         try {
-            const token = await login(username, password);
+            let token = await login(username, password);
             saveToken(token);
             onLogin(token);
         } catch (error) {

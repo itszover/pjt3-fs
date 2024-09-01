@@ -1,7 +1,7 @@
 const API_URL = 'http://localhost:3000/api';
 
 export async function login(username, password) {
-    const response = await fetch(`${API_URL}/login`, {
+    let response = await fetch(`${API_URL}/login`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
@@ -13,7 +13,7 @@ export async function login(username, password) {
         throw new Error('Erro ao fazer login');
     }
 
-    const data = await response.json();
+    let data = await response.json();
 
     if (!data.token) {
         throw new Error('Token not found');

@@ -4,12 +4,12 @@ import SearchResult from '../components/SearchResult';
 import { fetchCards, insertCard } from '../services/api';
 
 function Home({ token, onLogout }) {
-    const [searchResults, setSearchResults] = useState([]);
-    const [searchQuery, setSearchQuery] = useState("");
+    let [searchResults, setSearchResults] = useState([]);
+    let [searchQuery, setSearchQuery] = useState("");
 
     async function handleSearch() {
         try {
-            const results = await fetchCards(searchQuery, token);
+            let results = await fetchCards(searchQuery, token);
             setSearchResults(results);
         } catch (error) {
             console.error(error);

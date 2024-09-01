@@ -3,7 +3,7 @@ import Login from './pages/Login';
 import Home from './pages/Home';
 
 function App() {
-    const { isLoggedIn, token, login, logout } = useAuth();
+    let { isLoggedIn, token, login, logout } = useAuth();
 
     function renderContent() {
         if (!isLoggedIn) {
