@@ -6,7 +6,7 @@ import cache from "../config/cache.js";
 import { body, validationResult } from "express-validator";
 
 function index(req, res) {
-    res.send("Olá");
+    res.sendFile("dist/index.html", { root: "." });
 }
 
 async function login(req, res) {
