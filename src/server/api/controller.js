@@ -2,6 +2,7 @@ import card from "./card.js";
 import User from "./user.js";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
+import cache from "../config/cache.js";
 import { body, validationResult } from "express-validator";
 
 function index(req, res) {
@@ -9,6 +10,9 @@ function index(req, res) {
 }
 
 async function login(req, res) {
+    await body('username').notEmpty().withMessage('Username is required').run(req);
+    await body('password').notEmpty().withMessage('Password is required').run(req);
+
     const { username, password } = req.body;
 
     if (!username || !password) {
@@ -39,9 +43,9 @@ async function login(req, res) {
 }
 
 async function insert(req, res) {
-    await body('name').trim().escape().run(req);
-    await body('description').trim().escape().run(req);
-    await body('image').trim().isURL().run(req);
+    await body('name').notEmpty.trim().escape().run(req);
+    await body('description').notEmpty.trim().escape().run(req);
+    await body('image').notEmpty.trim().isURL().run(req);
 
     let errors = validationResult(req);
 
@@ -63,6 +67,14 @@ async function insert(req, res) {
 }
 
 async function select(req, res) {
+    let cacheKey = `cards-${req.query.name || ""}`;
+    let cachedCards = cache.get(cacheKey);
+
+    if (cachedCards) {
+        res.status(200).send(cachedCards);
+        return;
+    }
+
     try {
         let cards = await card.find({ name: { $regex: req.query.name || "", $options: "i" } });
         res.status(200).send(cards);
