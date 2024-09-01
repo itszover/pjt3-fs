@@ -7,23 +7,26 @@ function App() {
     let [searchResults, setSearchResults] = useState([]);
     let [isLoggedIn, setIsLoggedIn] = useState(false);
     let [token, setToken] = useState(null); // State to store the token
+    let [searchQuery, setSearchQuery] = useState("");
 
     function insertCard(card) {
         fetch('http://localhost:3000/api/insert', {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json',
+            headers: {
+                'Content-Type': 'application/json',
                 'Authorization': `Bearer ${token}`
-             },
+            },
             body: JSON.stringify(card)
         });
     }
 
-    async function searchCards(name) {
-        let response = await fetch(`http://localhost:3000/api/select?name=${name}`, {
+    async function searchCards() {
+        let response = await fetch(`http://localhost:3000/api/select?name=${searchQuery}`, {
             method: 'GET',
-            headers: { 'Content-Type': 'application/json',
+            headers: {
+                'Content-Type': 'application/json',
                 'Authorization': `Bearer ${token}`
-             }
+            }
         });
 
         if (!response.ok) {
@@ -41,20 +44,22 @@ function App() {
 
     return (
         <div className="container">
-      {!isLoggedIn ? (
-        <Login onLogin={handleLogin} />
-      ) : (
-        <>
-          <Input onInsertCard={insertCard} />
-          <input
-            type="text"
-            placeholder="Search"
-            onChange={(e) => searchCards(e.target.value)}
-          />
-          <SearchResult results={searchResults} />
-        </>
-      )}
-    </div>
+            {!isLoggedIn ? (
+                <Login onLogin={handleLogin} />
+            ) : (
+                <>
+                    <Input onInsertCard={insertCard} />
+                    <input
+                        type="text"
+                        placeholder="Search"
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                    />
+                    <button onClick={searchCards}>Search</button>
+                    <SearchResult results={searchResults} />
+                </>
+            )}
+        </div>
     );
 }
 
