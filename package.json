@@ -4,8 +4,9 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
+    "start": "npm run build && node ./src/server/index.js",
     "dev": "vite",
-    "build": "vite build && npm run build:server",
+    "build": "vite build",
     "build:server": "babel src/server --out-dir dist/server --extensions \".js\"",
     "preview": "vite preview",
     "server": "nodemon src/server/index.js"
