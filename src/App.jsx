@@ -1,9 +1,16 @@
+import { useEffect } from 'react';
 import useAuth from './hooks/useAuth';
 import Login from './pages/Login';
 import Home from './pages/Home';
 
 function App() {
-    let { isLoggedIn, token, login, logout } = useAuth();
+    let { isLoggedIn, token, login, logout, checkTokenValidity } = useAuth();
+
+    useEffect(() => {
+        if (isLoggedIn) {
+            checkTokenValidity();
+        }
+    }, [isLoggedIn]);
 
     function renderContent() {
         if (!isLoggedIn) {
