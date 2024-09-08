@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import { login, saveToken } from '../services/auth';
+import { login as loginService, saveToken } from '../services/auth';
+import '../styles/login.css';
 
 function Login({ onLogin }) {
     let [username, setUsername] = useState('');
@@ -15,7 +16,7 @@ function Login({ onLogin }) {
         }
 
         try {
-            let token = await login(username, password);
+            let token = await loginService(username, password);
             saveToken(token);
             onLogin(token);
         } catch (error) {
