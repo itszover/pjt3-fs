@@ -6,6 +6,8 @@ import cache from "../config/cache.js";
 import { body, validationResult } from "express-validator";
 import logger from '../config/logger.js';
 
+let blacklistedTokens = new Set();
+
 function index(req, res) {
     res.sendFile("dist/index.html", { root: "." });
 }
@@ -39,6 +41,7 @@ async function login(req, res) {
         }
 
         const token = jwt.sign({ id: user._id }, process.env.SECRET_KEY, { expiresIn: '1h' });
+        logger.info(`Generated token: ${token}`); // Log the generated token
         res.status(200).send({ token });
     } catch (error) {
         logger.error(`Error during login attempt: ${error.message}`);
@@ -54,7 +57,6 @@ async function insert(req, res) {
     let errors = validationResult(req);
 
     if (!errors.isEmpty()) {
-        logger.warn(`Insert attempt with validation errors: ${JSON.stringify(errors.array())}`);
         res.status(400).send({ errors: errors.array() });
         return;
     }
@@ -62,19 +64,13 @@ async function insert(req, res) {
     let { name, description, image } = req.body;
 
     if (!name || !description || !image) {
-        logger.warn(`Insert attempt with missing fields: ${JSON.stringify(req.body)}`);
         res.status(400).send({ message: "Dados inválidos" });
         return;
     }
 
-    try {
-        await new card(req.body).save();
-        logger.info(`Card inserted successfully: ${JSON.stringify(req.body)}`);
-        res.status(201).send({ message: "Carta inserida com sucesso" });
-    } catch (error) {
-        logger.error(`Error during card insertion: ${error.message}`);
-        res.status(500).send({ message: "Erro ao inserir carta" });
-    }
+    new card(req.body).save();
+    
+    res.status(201);
 }
 
 async function select(req, res) {
@@ -97,4 +93,59 @@ async function select(req, res) {
     }
 }
 
-export default { index, login, insert, select };
+function checkToken(req, res) {
+    const header = req.headers['authorization'];
+    
+    if (!header) {
+        return res.status(401).send({ message: "Token não fornecido" });
+    }
+
+    const token = header.split(' ')[1];
+
+    if (!token) {
+        return res.status(401).send({ message: "Token não fornecido" });
+    }
+
+    try {
+        const decoded = jwt.verify(token, process.env.SECRET_KEY);
+        res.status(200).send({ message: "Token válido" });
+    } catch (error) {
+        if (error.name === 'TokenExpiredError') {
+            res.status(401).send({ message: "Token expirado", code: "TOKEN_EXPIRED" });
+        } else if (error.name === 'JsonWebTokenError') {
+            res.status(401).send({ message: "Token inválido", code: "TOKEN_INVALID" });
+        } else {
+            res.status(500).send({ message: "Erro no servidor" });
+        }
+    }
+}
+
+function logout(req, res) {
+    const header = req.headers['authorization'];
+    
+    if (!header) {
+        return res.status(401).send({ message: "Token não fornecido" });
+    }
+
+    const token = header.split(' ')[1];
+
+    if (!token) {
+        return res.status(401).send({ message: "Token não fornecido" });
+    }
+
+    try {
+        jwt.verify(token, process.env.SECRET_KEY);
+        blacklistedTokens.add(token);
+        logger.info(`Token blacklisted: ${token}`);
+        res.status(200).send({ message: "Logout bem-sucedido" });
+    } catch (error) {
+        logger.error(`Token verification error during logout: ${error.message}`);
+        res.status(500).send({ message: "Erro no servidor" });
+    }
+}
+
+function isTokenBlacklisted(token) {
+    return blacklistedTokens.has(token);
+}
+
+export default { index, login, insert, select, checkToken, logout, isTokenBlacklisted };
