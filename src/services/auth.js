@@ -19,17 +19,18 @@ export async function login(username, password) {
         throw new Error('Token not found');
     }
 
+    saveToken(data.token);
     return data.token;
 }
 
-export function saveToken(token) {
-    localStorage.setItem('authToken', token);
+export function getToken() {
+    return sessionStorage.getItem('authToken');
 }
 
-export function getToken() {
-    return localStorage.getItem('authToken');
+export function saveToken(token) {
+    sessionStorage.setItem('authToken', token);
 }
 
 export function clearToken() {
-    localStorage.removeItem('authToken');
+    sessionStorage.removeItem('authToken');
 }
