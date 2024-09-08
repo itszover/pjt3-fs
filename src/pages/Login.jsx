@@ -8,12 +8,18 @@ function Login({ onLogin }) {
 
     async function handleSubmit(event) {
         event.preventDefault();
+
+        if (!username || !password) {
+            setError('Usuário e a senha são obrigatórios.');
+            return;
+        }
+
         try {
             let token = await login(username, password);
             saveToken(token);
             onLogin(token);
         } catch (error) {
-            setError('Login failed. Please check your credentials and try again.');
+            setError('Falha no login. Por favor, verifique suas credenciais e tente novamente.');
         }
     }
 
@@ -22,7 +28,7 @@ function Login({ onLogin }) {
             <h2>Login</h2>
             <form onSubmit={handleSubmit}>
                 <div>
-                    <label>Username:</label>
+                    <label>Nome de usuário</label>
                     <input
                         type="text"
                         value={username}
@@ -30,7 +36,7 @@ function Login({ onLogin }) {
                     />
                 </div>
                 <div>
-                    <label>Password:</label>
+                    <label>Senha</label>
                     <input
                         type="password"
                         value={password}
@@ -38,7 +44,7 @@ function Login({ onLogin }) {
                     />
                 </div>
                 {error && <p>{error}</p>}
-                <button type="submit">Login</button>
+                <button type="submit">Entrar</button>
             </form>
         </div>
     );
