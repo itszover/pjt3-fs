@@ -118,3 +118,8 @@
     margin: 5px 0 0;
     color: #555;
 }
+
+.error-message {
+    color: red;
+    margin-top: 10px;
+}
