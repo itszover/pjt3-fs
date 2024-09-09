@@ -86,6 +86,9 @@ async function select(req, res) {
     try {
         let cards = await card.find({ name: { $regex: req.query.name || "", $options: "i" } });
         logger.info(`Cards fetched successfully for query: ${req.query.name}`);
+        
+        cache.set(cacheKey, cards);
+
         res.status(200).send(cards);
     } catch (error) {
         logger.error(`Error during card search: ${error.message}`);
